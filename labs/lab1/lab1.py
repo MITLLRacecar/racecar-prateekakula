@@ -74,7 +74,9 @@ def update():
     global isDrivingFigure8
     global isDrivingTriangle
     # TODO (warmup): Implement acceleration and steering
-    rc.drive.set_speed_angle(0, 0)
+    rc.drive.set_speed_angle(rc.controller.get_trigger(rc.controller.Trigger.RIGHT)
+    - rc.controller.get_trigger(rc.controller.Trigger.LEFT), 
+    rc.controller.get_joystick(rc.controller.Joystick.LEFT)[0])
 
     if rc.controller.was_pressed(rc.controller.Button.A):
         print("Driving in a circle...")
