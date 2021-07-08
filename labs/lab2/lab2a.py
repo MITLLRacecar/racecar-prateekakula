@@ -33,6 +33,8 @@ CROP_FLOOR = ((360, 0), (rc.camera.get_height(), rc.camera.get_width()))
 
 # Colors, stored as a pair (hsv_min, hsv_max)
 BLUE = ((90, 50, 50), (120, 255, 255))  # The HSV range for the color blue
+GREEN = ((40,100,100),(80,255,255))
+RED = ((160, 50, 50),(180, 255, 255))
 # TODO (challenge 1): add HSV ranges for other colors
 
 # >> Variables
@@ -68,6 +70,10 @@ def update_contour():
 
         # Find all of the blue contours
         contours = rc_utils.find_contours(image, BLUE[0], BLUE[1])
+        if contours is None:
+            contours = rc_utils.find_contours(image, GREEN[0], GREEN[1])
+        if contours is None:
+            contours = rc_utils.find_contours(image, RED[0], RED[1])
 
         # Select the largest contour
         contour = rc_utils.get_largest_contour(contours, MIN_CONTOUR_AREA)
