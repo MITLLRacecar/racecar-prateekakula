@@ -78,6 +78,15 @@ def update_contour():
         # Display the image to the screen
         rc.display.show_color_image(image)
 
+from enum import IntEnum
+
+class State(IntEnum):
+    search = 0
+    obstacle = 1
+    approach = 2
+    stop = 3
+
+cur_state: State = State.search
 
 def start():
     """
@@ -85,7 +94,10 @@ def start():
     """
     global speed
     global angle
-
+    global cone_identified
+    global next_to_cone
+    cone_identified = False
+    next_to_cone = False
     # Initialize variables
     speed = 0
     angle = 0
@@ -107,10 +119,52 @@ def update():
     """
     global speed
     global angle
+    global contour_center
+    global contour_area
+    global cur_state
+    global cone_identified
+    global next_to_cone
 
     # Search for contours in the current color image
     update_contour()
+    
+    if cur_state == State.search:
+        # Set speed and angle to "wander"
+        if contour_area is None or contour_area == 0:
+            speed = 0.4
+            angle = 1
+        else:
+            cone_identified = True
+            cur_state = State.approach
+       
+    elif cur_state == State.approach:
+        # Set angle to face cone and approach
+        if contour_area is None or contour_area == 0:
+            cur_state = State.search
+        else: 
+            speed_temp = (rc.camera.get_width()*rc.camera.get_height())/(495*contour_area)
+            if speed_temp > 1:
+                speed = 0.3
+            else:
+                speed = speed_temp
+            if contour_center[1] > rc.camera.get_width()/2:
+                angle = 0.3
+            if contour_center[1] < rc.camera.get_width()/2:
+                angle = -0.3
+            if contour_area / (rc.camera.get_width()*rc.camera.get_height()) > 0.0621:
+                next_to_cone = True
+                cur_state = State.stop
+        if not cone_identified:
+            cur_state = State.search
 
+    elif cur_state == State.stop:
+        if contour_area > 19000 and contour_area < 27000:
+            speed = 0.1
+        else:
+            speed = 0
+        angle = 0
+
+    rc.drive.set_speed_angle(speed, angle)
     # TODO: Park the car 30 cm away from the closest orange cone
 
     # Print the current speed and angle when the A button is held down
