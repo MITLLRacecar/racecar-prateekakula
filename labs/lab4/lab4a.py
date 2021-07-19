@@ -38,6 +38,11 @@ def start():
     """
     This function is run once every time the start button is pressed
     """
+    global safetyStopped
+    global wantToOverride
+
+    safetyStopped = False
+    wantToOverride = False
     # Have the car begin at a stop
     rc.drive.stop()
 
@@ -61,6 +66,8 @@ def update():
     After start() is run, this function is run every frame until the back button
     is pressed
     """
+    global safetyStopped
+    global wantToOverride
     # Use the triggers to control the car's speed
     rt = rc.controller.get_trigger(rc.controller.Trigger.RIGHT)
     lt = rc.controller.get_trigger(rc.controller.Trigger.LEFT)
@@ -72,6 +79,24 @@ def update():
     _, back_dist = rc_utils.get_lidar_closest_point(scan, REAR_WINDOW)
 
     # TODO (warmup): Prevent the car from hitting things in front or behind it.
+    if safetyStopped:
+        if wantToOverride:
+            speed = rt - lt
+            tempVal = speed
+        else:
+            speed = 0.0
+            tempVal = 0.0
+    else:
+        speed = rt - lt
+        tempVal = speed
+    if forward_dist <= 120.0 or back_dist <= 120.0:
+        if not wantToOverride:
+            speed = -tempVal
+        safetyStopped = True
+        if rc.controller.is_down(rc.controller.Button.RB):
+            wantToOverride = True
+        if not rc.controller.is_down(rc.controller.Button.RB):
+            wantToOverride = False
     # Allow the user to override safety stop by holding the left or right bumper.
 
     # Use the left joystick to control the angle of the front wheels
