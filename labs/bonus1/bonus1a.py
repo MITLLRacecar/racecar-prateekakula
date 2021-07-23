@@ -65,7 +65,15 @@ def update():
     angle = rc.controller.get_joystick(rc.controller.Joystick.LEFT)[0]
 
     # TODO (warmup): Prevent the car from turning too abruptly using the IMU
-
+    x_a, y_a, z_a = rc.physics.get_linear_acceleration()
+    pitch, yaw, roll = rc.physics.get_angular_velocity()
+    if abs(pitch) > 0.1:
+        print('front/back flipping')
+        angle = math.copysign(0.3, pitch)
+    if abs(roll) > 0.1:
+        print('tipping over')
+        speed = -math.copysign(0.3, roll)
+    
     rc.drive.set_speed_angle(speed, angle)
 
 
