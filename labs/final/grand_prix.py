@@ -528,7 +528,7 @@ def update():
                     speed = 0.07
                     if contour_center_red is not None:
                         angle = rc_utils.remap_range(contour_center_red[1], 0, width, -1, 1) 
-                    print(depth_image_new[contour_center_red[0]][contour_center_red[1]])
+                    #print(depth_image_new[contour_center_red[0]][contour_center_red[1]])
                     if depth_image_new[contour_center_red[0]][contour_center_red[1]] < 50:
                         counter_COLOR = 0
                         curr_state_COLOR = State_COLOR.avoid_red
