@@ -297,6 +297,7 @@ def update():
             curr_state = State.green_line
             
     if curr_state == State.jump:
+        allow = False
         curr_state = State.green_line
         jump = True
     
@@ -513,6 +514,8 @@ def update():
                         print("else - align red")
                         curr_state_COLOR = State_COLOR.align_red
                         cone_counter += 1
+                        if cone_counter == 7:
+                            curr_state = State.green_line
                     counter_COLOR += rc.get_delta_time()
 
                 if curr_state_COLOR == State_COLOR.align_red:
@@ -831,7 +834,8 @@ def update():
     if len(markers):
         print("Marker ID: " + str(marker.get_id()))
     print(f"curr_state: {curr_state}")
-    #print(f"cone_counter: {cone_counter}")
+    print(curr_state_COLOR)
+    print(f"cone_counter: {cone_counter}")
     #print(just_finished_wall_following)
     print(speed)
     # print(allow)
