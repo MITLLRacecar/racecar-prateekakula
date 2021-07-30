@@ -114,6 +114,7 @@ camefromcone = False
 cone_counter = 0
 counter_jump = 0
 jump = False
+finallyfinal = False
 ########################################################################################
 # Functions
 ########################################################################################
@@ -233,6 +234,7 @@ def update():
     global cone_counter
     global counter_jump
     global jump
+    global finallyfinal
 
     #color camera
     color_img = rc.camera.get_color_image()
@@ -304,13 +306,15 @@ def update():
 
     #GREEN LINE
     if curr_state == State.green_line:
-        if jump and ar_marker_near:
+        if jump:
+            print(counter_jump)
             counter_jump += rc.get_delta_time()
-            if counter_jump < 2.5:
+            if 0.1< counter_jump < 1.7 :
                 speed = -1
                 print("GOING 0.2 ALMOST DONE")
-            else:
-                speed = 0.3
+            elif counter_jump > 2:
+                finallyfinal = True
+                speed = 0.5
                 print("FINSIHED")
         if len(markers) > 0 and ar_marker_near:
             curr_state = State.ar_tag
@@ -320,7 +324,7 @@ def update():
             if camefromcone:
                 speed = 0.1
             if camefromtrain == True:
-                speed = 0.125
+                speed = 0.11
             if var2 == False: 
                 if color_img is not None:
                     contours_green = rc_utils.find_contours(color_img, GREEN[0], GREEN[1])
@@ -440,13 +444,13 @@ def update():
                 if counter_train < 0.5:
                     angle = -1
                     print("turning left")
-                elif counter_train < 1.35:
+                elif counter_train < 1.45:
                     angle = 0
                     print("going straight")
-                elif counter_train < 2.85:
-                    angle = 1
+                elif counter_train < 3.1:
+                    angle = 1.5
                     print("turning right")
-                elif counter_train < 6.5:
+                elif counter_train < 6.6:
                     green_var = False
                     green_left = 2
                     allow = True
@@ -829,25 +833,27 @@ def update():
 
 
     
-            
+    if finallyfinal == True:
+        speed = 0.3
     # speed = 0.1
     if len(markers):
         print("Marker ID: " + str(marker.get_id()))
     print(f"curr_state: {curr_state}")
     print(curr_state_COLOR)
-    print(f"cone_counter: {cone_counter}")
+    #print(f"cone_counter: {cone_counter}")
     #print(just_finished_wall_following)
     print(speed)
     # print(allow)
     # print(f"allow2: {allow_2}")
-    print(green_var, "   ", green_left, "   ", angle)
-    print(counter_final_stretch)
+    #print(green_var, "   ", green_left, "   ", angle)
+    print(counter_jump)
     # print(len(contours_green))
     # print(f"front right window: {right_front}")
     #speed = 0
     #print(depth_img[(height//3)][width//2])
     if curr_state != State.cone_slaloming:
         angle = rc_utils.clamp(angle, -1, 1)
+    
 
     rc.drive.set_speed_angle(speed, angle) 
     
