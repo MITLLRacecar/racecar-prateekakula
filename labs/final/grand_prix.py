@@ -466,7 +466,7 @@ def update():
                 var = True
         
         else:
-            if counter_final > 36.5 and contours_green is not None:
+            if counter_final > 37 and contours_green is not None:
                 curr_state = State.green_line
                 camefromcone = True
                 #allow_2 = True
