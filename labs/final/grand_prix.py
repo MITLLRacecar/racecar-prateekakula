@@ -481,9 +481,11 @@ def update():
                 contours_red = rc_utils.find_contours(color_img, RED[0], RED[1])
                 contour_red = rc_utils.get_largest_contour(contours_red, 100)
                 if contour_red is not None:
-                        contour_center_red = rc_utils.get_contour_center(contour_red)
-                        rc_utils.draw_contour(color_img, contour_red, rc_utils.ColorBGR.red.value)
-                        rc_utils.draw_circle(color_img, contour_center_red,rc_utils.ColorBGR.yellow.value)
+                    contour_center_red = rc_utils.get_contour_center(contour_red)
+                    rc_utils.draw_contour(color_img, contour_red, rc_utils.ColorBGR.red.value)
+                    rc_utils.draw_circle(color_img, contour_center_red,rc_utils.ColorBGR.yellow.value)
+                if contour_red is None:
+                    contour_center_red = None
                 
                 contours_blue = rc_utils.find_contours(color_img, BLUE[0], BLUE[1])
                 contour_blue = rc_utils.get_largest_contour(contours_blue, 100)
@@ -524,7 +526,7 @@ def update():
 
                 if curr_state_COLOR == State_COLOR.align_red:
                     speed = 0.07
-                    if contours_red is not None:
+                    if contour_center_red is not None:
                         angle = rc_utils.remap_range(contour_center_red[1], 0, width, -1, 1) 
                     print(depth_image_new[contour_center_red[0]][contour_center_red[1]])
                     if depth_image_new[contour_center_red[0]][contour_center_red[1]] < 50:
